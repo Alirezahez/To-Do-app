@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Tasks</title>
+</head>
+<body>
+    
+<table>
+    <th>taskId</th>
+    <th>text</th>
+    <th>state</th>
+    <th>creatorId</th>
+    <th>isTaskClaimed</th>
+    <th>claimingUserId</th>
+    <th>isTaskDone</th>
+    <th>isTaskCleared</th>
+    <% tasks.map((task)=>{ %>
+        <tr>
+            <td><%= task.taskId %></td>
+            <td><%= task.text %></td>
+            <td><%= task.state %></td>
+            <td><%= task.creatorId %></td>
+            <td><%= task.isTaskClaimed %></td>
+            <td><%= task.claimingUserId %></td>
+            <td><%= task.isTaskDone %></td>
+            <td><%= task.isTaskCleared %></td>
+        </tr>
+    <% }) %>
+</table>
+
+</body>
+
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To Do list</title>
+</head>
+<link rel="stylesheet" href="style.css">
+<body>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<div class="To Do list">
+    <div class="TO Do" id=To-Do>
+        <div class="container">
+            <h1>To-Do </h1>
+        </div>
+    </div>
+    <% let stat %>
+    <div class="container">
+        <div class="container" id="logout">
+            <div class="accordion" id="accordionExample">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                 class="bi bi-gear-fill" viewBox="0 0 16 16">
+                                <path
+                                        d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
+                            </svg>
+                            Logged in as <%= username %></a>
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"
+                         data-bs-parent="#accordionExample">
+                        <form class="accordion-body" action="/logout" method="get">
+                            <input type="submit" value="Log Out" name="logout" class="btn btn-primary">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="container" id=Task>
+
+                <p class="form-control" <%= tasks.filter(((task) => task.claimingUser === null && !task.isTaskCleared)).length === 0 ? "hidden" : "" %> >
+                    Unclaimed Tasks</p>
+
+                <!--                UNCLAIMED-->
+                <% tasks.map((task)=>{ %>
+                    <% if(task.claimingUser === null && !task.isTaskCleared){ %>
+                        <form class="input-group mb-3" action="/<%= task._id %>/<%= username %>/claim" method="get">
+                            <input type="text" class="form-control"
+                                   placeholder="<%= task.text %>" disabled>
+                            <input type="submit" class="btn btn-outline-secondary" value="Claim">
+                        </form>
+                <% }}) %>
+
+                <p class="form-control" <%= tasks.filter(((task) => {
+                    if (!task.claimingUser) return false
+                    return (task.claimingUser.username !== username && !task.isTaskDone && !task.isTaskCleared)
+                })).length === 0 ? "hidden" : "" %> >Claimed by someone and unfinished Tasks</p>
+                <!--                CLAIMED SMNE Unfinished-->
+                <% tasks.map((task)=>{ %>
+                    <% if(task.claimingUser){ %>
+                        <% if(task.claimingUser.username !== username && !task.isTaskDone && !task.isTaskCleared){ %>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control"
+                                       placeholder="<%= task.text %>" disabled>
+                            </div>
+                <% }}}) %>
+
+                <p class="form-control" <%= tasks.filter(((task) => {
+                    if (!task.claimingUser) return false
+                    return (task.claimingUser.username !== username && task.isTaskDone && !task.isTaskCleared)
+                })).length === 0 ? "hidden" : "" %> >Claimed by someone and finished Tasks</p>
+                <!--                CLAIMED SMNE FINISHED-->
+                <% tasks.map((task)=>{ %>
+                    <% if(task.claimingUser){ %>
+                        <% if(task.claimingUser.username !== username && task.isTaskDone && !task.isTaskCleared){ %>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control"
+                                       placeholder="<%= task.text %>" disabled>
+                            </div>
+                <% }}}) %>
+
+                <p class="form-control" <%= tasks.filter(((task) => {
+                    if (!task.claimingUser) return false
+                    return (task.claimingUser.username === username && !task.isTaskDone && !task.isTaskCleared)
+                })).length === 0 ? "hidden" : "" %> >Claimed by me and unfinished Tasks</p>
+                <!--                CLAIMED ME UNfINISHED-->
+                <% tasks.map((task)=>{ %>
+                    <% if(task.claimingUser){ %>
+                        <% if(task.claimingUser.username === username && !task.isTaskDone && !task.isTaskCleared){ %>
+                            <form class="input-group mb-3"
+                                  action="/<%= task._id %>/<%= username %>/abandon/abandonorcomplete"
+                                  method="get">
+                        <span class="input-group-text">
+                        <input type="checkbox" class="form-check-input"
+                               onchange="{this.form.action= '/<%= task._id %>/<%= username %>/done/abandonorcomplete'; this.form.submit() }">
+                        </span>
+                                <input type="text" class="form-control"
+                                       placeholder="<%= task.text %>" disabled>
+                                <input type="submit" value="Abandon" class="btn btn-outline-secondary">
+                            </form>
+                <% }}}) %>
+
+                <p class="form-control" <%= tasks.filter(((task) => {
+                    if (!task.claimingUser) return false
+                    return (task.claimingUser.username === username && task.isTaskDone && !task.isTaskCleared)
+                })).length === 0 ? "hidden" : "" %> >Claimed by me and finished Tasks</p>
+                <!--                CLAIMED ME FINISHED-->
+                <% tasks.map((task)=>{ %>
+                    <% if(task.claimingUser){ %>
+                        <% if(task.claimingUser.username === username && task.isTaskDone && !task.isTaskCleared){ %>
+                            <form class="input-group mb-3" action="/<%= task._id %>/<%= username %>/unfinish"
+                                  method="get">
+                        <span class="input-group-text">
+                            <input type="checkbox" class="form-check-input" onchange="this.form.submit()"
+                                   checked="checked">
+                        </span>
+                                <input type="text" class="form-control"
+                                       placeholder="<%= task.text %>" disabled>
+                            </form>
+                <% }}}) %>
+
+                <form class="input-group mb-3" action="<%= username %>/addtask" method="get">
+                    <input type="text" class="form-control" id="text" name="text" placeholder="Enter a new task here">
+                    <input type="submit" value="Add" class="btn btn-outline-secondary">
+                </form>
+
+
+                <div class="button" id="buttonID">
+                    <form action="<%= username %>/purge" method="get">
+                        <input type="submit" value="Purge!" class="btn btn-outline-secondary">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+
+
+</body>
+
+</html>
